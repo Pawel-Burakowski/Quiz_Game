@@ -8,6 +8,7 @@
     <title>Quiz game</title>
     <meta name="description" content="Nauka JS">
     <meta name="author" content="Paweł Burakowski">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="style.css">
 
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
@@ -17,10 +18,41 @@
 
     <div id="hex-container" class="container">
 
+        <div class="initial-screen">
+            <button id="start-button"> Start </button>
+        </div>
+
+        <div id="main-container">
+
+            <div class="headline">
+                <div class="counter">
+                    <span class="number-of-question"> Pytanie 1 z 20 </span>
+                </div>
+
+                <div class="timer">
+                    <i class="uil uil-stopwatch"></i>
+                    <span class="time-left"> 15 s </span>
+                </div>
+            </div>
+
+            <div id="questions">
+
+                <!-- This is where we'll post questions -->
+
+            </div>
+
+            <div class="buttonNext">
+                <button id="next-button"> Następne </button>
+            </div>
+        </div>
+
+        <div class="score-container hide">
+            <div id="user-score"> Twój wynik: </div>
+            <button id="restart-button"> Restart </button>
+        </div>
+
     </div>
 
-
-    
     <script src="skrypt.js"></script>
 
 </body>
