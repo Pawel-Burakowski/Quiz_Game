@@ -328,3 +328,266 @@ HEXAGON.prototype = {
 $(function () {
 	RENDERER.init()
 })
+
+
+//get of all variables
+const timeLeft = document.querySelector(".time-left");
+const quizContainer = document.getElementById("questions");
+const nextBtn = document.getElementById("next-button");
+const countOfQuestion = document.querySelector(".number-of-question");
+const displayContainer = document.getElementById("main-container");
+const scoreContainer = document.querySelector(".score-container");
+const restart = document.getElementById("restart-button");
+const userScore = document.getElementById("user-score");
+const startScreen = document.querySelector(".initial-screen");
+const startButton = document.getElementById("start-button");
+let scoreCount = 0;
+let questionCount;
+let countdown;
+
+const quizArray = [
+    {
+        id: "0",
+        question: "Co oznacza skrót www?",
+        options: ["Wielka Wyszukiwarka Wiadomości", "Word Wide Web", "Wyszukiwarka Wszystkich Wiadomości", "Word Web Wide"],
+        correct: "Word Wide Web",
+    },
+    {
+        id: "1",
+        question: "W jaki sposób przekształcić tablicę na tekst, w którym kolejne elementy będą oddzielone od siebie określonym separatorem??",
+        options: ["Array.prototype.join(separator)", "Array.prototype.toString()", "Array.prototype.concat(separator)", "Array.prototype.push()"],
+        correct: "Array.prototype.join(separator)",
+    },
+    {
+        id: "2",
+        question: "Po czyjej stronie wykonywana jest operacja JavaScript?",
+        options: ["Po stronie użytkownika", "Po stronie serwera", "Po stronie użytkownika i serwera", "Żadna z powyższych"],
+        correct: "Po stronie użytkownika",
+    },
+    {
+        id: "3",
+        question: "Jak dodać przestrzeń między obramowaniem a wewnętrzną zawartością elementu?",
+        options: ["margin", "padding", "border", "spacing"],
+        correct: "padding",
+    },
+    {
+        id: "4",
+        question: "Kto tworzy standardy internetowe?",
+        options: ["Google", "Microsoft", "Mozilla", "W3C"],
+        correct: "W3C",
+    },
+    {
+        id: "5",
+        question: "Jak sprawdzić, czy w tablicy występuje określony elementy?",
+        options: ["Za pomocą parametru indexOf", "Za pomocą parametru reverse", "Za pomocą parametru sort", "Za pomocą parametru shift"],
+        correct: "Za pomocą parametru indexOf",
+    },
+	{
+        id: "6",
+        question: "Pliki skryptów Java Script mają zazwyczaj rozszerzenie:",
+        options: ["*.java", "*.script", "*.js", "*.javascript"],
+        correct: "*.js",
+    },
+    {
+        id: "7",
+        question: "Instrukcja warunkowa rozpoczyna się od instrukcji:",
+        options: ["if", "while", "for", "do...while"],
+        correct: "if",
+    },
+    {
+        id: "8",
+        question: "Jak zapisać liczbę ze stałą liczbą miejsc po przecinku (np. kwota)?",
+        options: ["toFixed", "toPrecision", "toPrecision(n)", "valueOf"],
+        correct: "toFixed",
+    },
+    {
+        id: "9",
+        question: "Który z operatorów wykorzystujemy do tworzenia pętli?",
+        options: ["if", "else", "for", "let"],
+        correct: "for",
+    },
+	{
+        id: "10",
+        question: "Która z operacji jest poprawną instrukcją przypisania?",
+        options: ["X:=3", "X==3", "X=3", "X===3"],
+        correct: "X=3",
+    },
+	{
+        id: "11",
+        question: "Jak pobrać określony znak tekstu?",
+        options: ["String.prototype.concat()", "String.prototype.charAt()", "String.prototype.replace()", "String.prototype.valueOf()"],
+        correct: "String.prototype.charAt()",
+    },
+	{
+        id: "12",
+        question: "Które z poniższych NIE jest poprawnym sposobem deklarowania tablicy w JavaScript?",
+        options: ["var arr = new Array();", "var arr = [1, 2, 3, 4];", "var [] = new Number() [5];", "Każdy zapis jest poprawny"],
+        correct: "var [] = new Number() [5];",
+    },
+	{
+        id: "13",
+        question: "Który z poniższych elementów wypisze w okienku alertu komunikat Hello World?",
+        options: ["alertBox(“Hello World”);", "alert(Hello World);", "msgAlert(“Hello World”);", "alert(“Hello World”);"],
+        correct: "alert(“Hello World”);",
+    },
+	{
+        id: "14",
+        question: "Która metoda wbudowana łączy tekst dwóch ciągów i zwraca nowy ciąg?",
+        options: ["append()", "concat()", "attach()", "żadna z tych metod"],
+        correct: "concat()",
+    },
+]
+
+
+//Start of the game: hide quiz and display start screen
+window.onload = () => 
+{
+    displayContainer.classList.add("hide");			//hide quiz container
+    startScreen.classList.remove("hide");			//show Start Button
+};
+
+//Click on start button
+startButton.addEventListener("click", () => 
+{
+    displayContainer.classList.remove("hide");		//show quiz container
+    startScreen.classList.add("hide");				//hide Start Button
+    initial();
+});
+
+//initial setup
+function initial()
+{
+    quizContainer.innerHTML = "";		//1.step: clear the question fields
+    questionCount = 0;
+    scoreCount = 0;
+    count = 15;							//time
+
+    clearInterval(countdown);
+    timerDisplay();
+    quizCreator();
+    quizDisplay(questionCount);
+}
+
+//Timer
+const timerDisplay = () => 
+{
+    countdown = setInterval(() => 
+	{
+        count--;
+        timeLeft.innerHTML = `${count} s`;
+        if (count === 0)
+		{
+			timeLeft.innerHTML = `15 s`
+			clearInterval(countdown);
+            displayNext();
+        }
+    }, 1000);
+};
+
+//Quiz Creation
+function quizCreator()
+{
+    quizArray.sort(() => Math.random() - 0.5);		//Math.random() will give you random numbers that are roughly 50% negative and 50% positive
+		console.log(quizArray);						//mixed up Array
+							
+    for (let i of quizArray) 
+	{
+        i.options.sort(() => Math.random() - 0.5);		//mixed up of options
+
+        let div = document.createElement("div");		//quiz div creation
+        div.classList.add("container-mid", "hide");
+        
+        countOfQuestion.innerHTML = "1 z " + quizArray.length + " pytań";
+
+        let question_DIV = document.createElement("p");
+        question_DIV.classList.add("question");
+        question_DIV.innerHTML = i.question;
+        div.appendChild(question_DIV);
+        //options
+        div.innerHTML += 
+		`
+    	<button class="option-div" onclick="checker(this)">${i.options[0]}</button>
+    	<button class="option-div" onclick="checker(this)">${i.options[1]}</button>
+      	<button class="option-div" onclick="checker(this)">${i.options[2]}</button>
+       	<button class="option-div" onclick="checker(this)">${i.options[3]}</button>
+    	`;
+        quizContainer.appendChild(div);
+    }
+}
+
+nextBtn.addEventListener("click", (displayNext = () => 
+{
+    questionCount += 1;		//increment questionCount
+
+    if (questionCount == quizArray.length) 
+	{
+		displayContainer.classList.add("hide");
+		scoreContainer.classList.remove("hide");
+    	userScore.innerHTML = "Twój wynik to " + scoreCount + " z " + questionCount + " pytań";
+    } 
+	else 
+	{
+		countOfQuestion.innerHTML =  questionCount + 1 + " z " + quizArray.length + " pytań";
+		quizDisplay(questionCount);
+		timeLeft.innerHTML = `15 s`
+		count = 15;
+		clearInterval(countdown);
+		timerDisplay();
+    }
+    })
+)
+
+//Display quiz
+const quizDisplay = (questionCount) => 
+{
+    let quizCards = document.querySelectorAll(".container-mid");
+    //Hide other cards
+    quizCards.forEach((card) => 
+	{
+		console.log(quizCards);					//show me all of quizCards
+        card.classList.add("hide");				//assign for each element "hide"
+    });
+    //display current question card
+    quizCards[questionCount].classList.remove("hide");
+}
+
+//Checker Function to check if option is correct or not
+function checker(userOption) 
+{
+    let userSolution = userOption.innerText;
+    let question = document.getElementsByClassName("container-mid")[questionCount];
+    let options = question.querySelectorAll(".option-div");
+
+    //if user clicked answer == correct option stored in object
+    if (userSolution === quizArray[questionCount].correct) 
+	{
+        userOption.classList.add("correct");
+        scoreCount++;
+    } 
+	else 
+	{
+        userOption.classList.add("incorrect");
+        //For marking the correct option
+        options.forEach((element) => 
+		{
+            if (element.innerText == quizArray[questionCount].correct) 
+			{
+                element.classList.add("correct");
+            }
+        });
+    }
+
+    //clear interval(stop timer)
+    clearInterval(countdown);
+    //disable all options
+    options.forEach((element) => {
+        element.disabled = true;
+    });
+}
+
+//Restart Quiz
+restart.addEventListener("click", () => {
+    initial();
+    displayContainer.classList.remove("hide");
+    scoreContainer.classList.add("hide");
+});
