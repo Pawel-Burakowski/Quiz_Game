@@ -442,7 +442,6 @@ const quizArray = [
 //Start of the game: hide quiz and display start screen
 window.onload = () => 
 {
-    displayContainer.classList.add("hide");			//hide quiz container
     startScreen.classList.remove("hide");			//show Start Button
 };
 
